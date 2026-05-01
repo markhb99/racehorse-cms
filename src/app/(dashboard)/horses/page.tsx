@@ -1,20 +1,23 @@
-import { Trophy } from 'lucide-react'
-import { EmptyState } from '@/components/feedback/empty-state'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { getHorses } from '@/lib/supabase/queries/horses'
+import { HorsesPageClient } from './horses-page-client'
+import type { HorseStatus } from '@/lib/types'
 
 export const metadata = { title: 'Horses' }
 
-// Phase 2 replaces this with HorsesPageClient + horse grid
-export default function HorsesPage() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Horses</h1>
-      </div>
-      <EmptyState
-        icon={Trophy}
-        title="No horses yet"
-        description="Add your first horse to start tracking share sales. This page will be built in Phase 2."
-      />
-    </div>
-  )
+const VALID_STATUSES = new Set(['active', 'sold', 'archived', 'all'])
+
+interface HorsesPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function HorsesPage({ searchParams }: HorsesPageProps) {
+  const params = await searchParams
+  const rawStatus = Array.isArray(params.status) ? params.status[0] : params.status
+  const status = VALID_STATUSES.has(rawStatus ?? '') ? (rawStatus as HorseStatus | 'all') : 'active'
+
+  const supabase = await createServerSupabaseClient()
+  const horses = await getHorses(supabase, { status })
+
+  return <HorsesPageClient horses={horses} status={status as 'active' | 'sold' | 'archived' | 'all'} />
 }
