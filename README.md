@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Racehorse Share CMS
 
-## Getting Started
+A single-tenant web CMS for tracking racehorse share sales, built with Next.js 16, Supabase, and shadcn/ui.
 
-First, run the development server:
+## Quick start
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy the env template and fill in your Supabase project values
+cp .env.local.example .env.local
+
+# 3. Apply database migrations (Supabase CLI or paste into SQL editor)
+# See supabase/README.md for instructions
+
+# 4. Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visit `/login` and sign in with the admin user you created in Supabase Auth.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Build & deploy
 
-## Learn More
+```bash
+npm run build   # Verify build passes before deploying
+```
 
-To learn more about Next.js, take a look at the following resources:
+See `DEPLOY.md` for the full Vercel deployment guide.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `ARCHITECTURE.md` in the parent directory for the full architecture blueprint.
