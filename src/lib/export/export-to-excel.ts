@@ -1,11 +1,47 @@
-// Phase 5 — SheetJS Excel writer.
-// Placeholder stub.
-
+import * as XLSX from 'xlsx'
+import { BUYER_STATUSES } from '../constants'
+import type { BuyerStatusKey } from '../constants'
 import type { Horse, Buyer } from '../types'
 
-export async function exportHorseBuyers(
-  _horse: Horse,
-  _buyers: Buyer[],
-): Promise<Buffer> {
-  throw new Error('exportHorseBuyers not yet implemented — coming in Phase 5')
+export async function exportHorseBuyers(horse: Horse, buyers: Buyer[]): Promise<Buffer> {
+  const sorted = [...buyers].sort((a, b) => Number(b.shares_pct) - Number(a.shares_pct))
+
+  const data = sorted.map((b, i) => {
+    const inv = Number(b.invoice_amount)
+    const paid = Number(b.paid_amount)
+    return {
+      '#': i + 1,
+      'First Name': b.first_name,
+      'Last Name': b.last_name ?? '',
+      'Email': b.email ?? '',
+      'Phone': b.phone ?? '',
+      'Shares %': Number(b.shares_pct),
+      'Status': BUYER_STATUSES[b.status as BuyerStatusKey]?.label ?? b.status,
+      'Invoice (AUD)': inv,
+      'Paid (AUD)': paid,
+      'Outstanding (AUD)': Math.max(0, inv - paid),
+      'Remarks': b.remarks ?? '',
+    }
+  })
+
+  const ws = XLSX.utils.json_to_sheet(data)
+
+  ws['!cols'] = [
+    { wch: 4 },   // #
+    { wch: 14 },  // First Name
+    { wch: 14 },  // Last Name
+    { wch: 28 },  // Email
+    { wch: 16 },  // Phone
+    { wch: 10 },  // Shares %
+    { wch: 24 },  // Status
+    { wch: 14 },  // Invoice
+    { wch: 14 },  // Paid
+    { wch: 16 },  // Outstanding
+    { wch: 32 },  // Remarks
+  ]
+
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, horse.display_name.slice(0, 31))
+
+  return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer
 }

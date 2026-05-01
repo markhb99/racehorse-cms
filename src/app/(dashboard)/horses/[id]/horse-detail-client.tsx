@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Plus, Upload, Download, FileText, MoreHorizontal, Pencil, Archive, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/kpi/kpi-card'
 import { SharesProgressBar } from '@/components/horses/shares-progress-bar'
@@ -19,6 +18,7 @@ import { BulkActionBar } from '@/components/buyers/bulk-action-bar'
 import { AddBuyerModal } from '@/components/buyers/add-buyer-modal'
 import { EditBuyerModal } from '@/components/buyers/edit-buyer-modal'
 import { DeleteBuyerDialog } from '@/components/buyers/delete-buyer-dialog'
+import { ImportModal } from '@/components/import/import-modal'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +47,7 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
 
   // Buyer modals
   const [addBuyerOpen, setAddBuyerOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
   const [editBuyer, setEditBuyer] = useState<Buyer | null>(null)
   const [deleteBuyer, setDeleteBuyer] = useState<Buyer | null>(null)
 
@@ -134,7 +135,7 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
             size="sm"
             variant="outline"
             className="gap-1.5"
-            onClick={() => toast.info('Import coming in Phase 5')}
+            onClick={() => setImportOpen(true)}
           >
             <Upload className="h-4 w-4" /> Import Excel
           </Button>
@@ -150,7 +151,7 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
             size="sm"
             variant="outline"
             className="gap-1.5"
-            onClick={() => toast.info('PDF export coming in Phase 5')}
+            onClick={() => window.open(`/api/export/pdf/${horse.id}`, '_blank')}
           >
             <FileText className="h-4 w-4" /> Export PDF
           </Button>
@@ -188,6 +189,9 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
       <EditHorseModal horse={horse} open={editHorseOpen} onOpenChange={setEditHorseOpen} />
       <ArchiveHorseDialog horse={horse} open={archiveHorseOpen} onOpenChange={setArchiveHorseOpen} />
       <DeleteHorseDialog horse={horse} open={deleteHorseOpen} onOpenChange={setDeleteHorseOpen} />
+
+      {/* Import modal */}
+      <ImportModal horseId={horse.id} open={importOpen} onOpenChange={setImportOpen} />
 
       {/* Buyer modals */}
       <AddBuyerModal horseId={horse.id} open={addBuyerOpen} onOpenChange={setAddBuyerOpen} />
