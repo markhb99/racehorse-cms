@@ -19,10 +19,9 @@ export const metadata: Metadata = {
     template: '%s | Racehorse Share CMS',
   },
   description: 'Manage racehorse share sales, buyers, and revenue analytics.',
-  openGraph: {
-    title: 'Racehorse Share CMS',
-    description: 'Manage racehorse share sales, buyers, and revenue analytics.',
-    images: ['/og.png'],
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
   },
 }
 

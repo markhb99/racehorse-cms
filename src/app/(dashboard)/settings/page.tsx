@@ -1,17 +1,30 @@
-import { Settings } from 'lucide-react'
-import { EmptyState } from '@/components/feedback/empty-state'
+import { createServerSupabaseClient, getServerUser } from '@/lib/supabase/server'
+import { getAllSettings } from '@/lib/supabase/queries/settings'
+import { getHorses, getAllActiveHorsesWithBuyers } from '@/lib/supabase/queries/horses'
+import { computeDataHealth } from '@/lib/kpis'
+import { SettingsSections } from './settings-sections'
 
 export const metadata = { title: 'Settings' }
 
-// Phase 6 replaces this with the full settings form
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const supabase = await createServerSupabaseClient()
+  const [user, settings, archivedHorses, { horses, buyersByHorse }] = await Promise.all([
+    getServerUser(),
+    getAllSettings(supabase),
+    getHorses(supabase, { status: 'archived' }),
+    getAllActiveHorsesWithBuyers(supabase),
+  ])
+
+  const healthIssues = computeDataHealth(horses, buyersByHorse)
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-8">
       <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-      <EmptyState
-        icon={Settings}
-        title="Settings coming soon"
-        description="Project name, password change, archived horses, and data health check will be built in Phase 6."
+      <SettingsSections
+        projectName={settings.project_name ?? 'Racehorse Share CMS'}
+        email={user?.email ?? ''}
+        archivedHorses={archivedHorses}
+        healthIssues={healthIssues}
       />
     </div>
   )
