@@ -1,28 +1,25 @@
 import { notFound } from 'next/navigation'
-import { EmptyState } from '@/components/feedback/empty-state'
-import { Trophy } from 'lucide-react'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { getHorseById } from '@/lib/supabase/queries/horses'
+import { getBuyersByHorse } from '@/lib/supabase/queries/buyers'
+import { HorseDetailClient } from './horse-detail-client'
 
 interface HorseDetailPageProps {
   params: Promise<{ id: string }>
 }
 
-export const metadata = { title: 'Horse Detail' }
+export const metadata = { title: 'Horse' }
 
-// Phase 3 replaces this with full horse detail + buyer table
 export default async function HorseDetailPage({ params }: HorseDetailPageProps) {
   const { id } = await params
 
-  if (!id) notFound()
+  const supabase = await createServerSupabaseClient()
+  const [horse, buyers] = await Promise.all([
+    getHorseById(supabase, id),
+    getBuyersByHorse(supabase, id),
+  ])
 
-  return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Horse Detail</h1>
-      <p className="text-sm text-muted-foreground">Horse ID: {id}</p>
-      <EmptyState
-        icon={Trophy}
-        title="Horse detail coming soon"
-        description="The full horse detail page with buyer table will be built in Phase 3."
-      />
-    </div>
-  )
+  if (!horse) notFound()
+
+  return <HorseDetailClient horse={horse} buyers={buyers} />
 }
