@@ -13,8 +13,9 @@ export async function middleware(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request)
   const { pathname } = request.nextUrl
 
-  // Unauthenticated user hitting a protected route → /login
-  if (!user && !isPublicPath(pathname)) {
+  // Unauthenticated or anonymous user hitting a protected route → /login
+  const isAuthenticated = user && !user.is_anonymous && user.email
+  if (!isAuthenticated && !isPublicPath(pathname)) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     loginUrl.searchParams.delete('error')
