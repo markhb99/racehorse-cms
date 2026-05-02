@@ -1,6 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { LogOut, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
@@ -16,7 +15,6 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
-  const router = useRouter()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -39,7 +37,7 @@ export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
         <DropdownMenuItem
           onSelect={async () => {
             await signOutAction()
-            router.push('/login')
+            window.location.href = '/login'
           }}
           className="text-destructive focus:text-destructive gap-2"
         >
