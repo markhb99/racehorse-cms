@@ -19,15 +19,15 @@ export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
       <DropdownMenuTrigger
         className={
           variant === 'sidebar'
-            ? 'flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors'
+            ? 'flex min-w-0 flex-1 items-center gap-1.5 rounded-md px-2 py-1 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors'
             : 'flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors'
         }
         aria-label="User menu"
       >
-        <span className="max-w-[150px] truncate" title={email}>
+        <span className="min-w-0 flex-1 truncate" title={email}>
           {email}
         </span>
-        <ChevronDown className="h-3 w-3 shrink-0" />
+        <ChevronDown className="h-3 w-3 shrink-0 opacity-60" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         <form action={signOut}>

@@ -36,9 +36,9 @@ export function Sidebar({ email }: SidebarProps) {
       <Separator className="bg-sidebar-border" />
 
       {/* User */}
-      <div className="p-3 flex items-center gap-3">
-        <div className="h-7 w-7 rounded-full bg-primary/20 text-primary-foreground flex items-center justify-center shrink-0">
-          <span className="text-xs font-semibold">{initials}</span>
+      <div className="p-3 flex items-center gap-2">
+        <div className="h-8 w-8 rounded-full bg-sidebar-primary/30 ring-1 ring-sidebar-primary/40 flex items-center justify-center shrink-0">
+          <span className="text-xs font-bold text-white">{initials}</span>
         </div>
         <UserMenu email={email} variant="sidebar" />
       </div>
