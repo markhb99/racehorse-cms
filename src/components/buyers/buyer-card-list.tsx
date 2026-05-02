@@ -1,8 +1,15 @@
 'use client'
 
-import { Pencil, Trash2 } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { StatusBadge } from './status-badge'
 import { formatCurrency } from '@/lib/format/currency'
 import type { Buyer } from '@/lib/types'
@@ -49,7 +56,7 @@ export function BuyerCardList({ buyers, selectedIds, onSelectionChange, onEdit, 
           >
             <CardContent className="p-3">
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">
                     {buyer.first_name} {buyer.last_name ?? ''}
                   </p>
@@ -57,7 +64,35 @@ export function BuyerCardList({ buyers, selectedIds, onSelectionChange, onEdit, 
                     <p className="text-xs text-muted-foreground truncate">{buyer.email}</p>
                   )}
                 </div>
-                <StatusBadge status={status} className="shrink-0" />
+
+                <div className="flex items-center gap-1 shrink-0">
+                  <StatusBadge status={status} />
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors -mr-1"
+                      aria-label="Buyer actions"
+                    >
+                      <MoreHorizontal className="h-5 w-5" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem onSelect={() => onEdit(buyer)} className="gap-2">
+                        <Pencil className="h-3.5 w-3.5" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onSelect={() => onDelete(buyer)}
+                        variant="destructive"
+                        className="gap-2"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
 
               <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
@@ -86,23 +121,6 @@ export function BuyerCardList({ buyers, selectedIds, onSelectionChange, onEdit, 
                   {buyer.remarks}
                 </p>
               )}
-
-              <div className="mt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onEdit(buyer) }}
-                  className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  <Pencil className="h-3 w-3" /> Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onDelete(buyer) }}
-                  className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                >
-                  <Trash2 className="h-3 w-3" /> Delete
-                </button>
-              </div>
             </CardContent>
           </Card>
         )
