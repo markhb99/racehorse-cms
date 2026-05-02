@@ -3,13 +3,14 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, User, Tag, UserPlus, Trash2, Users,
+  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, Tag, UserPlus, Trash2, Users, LogOut,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { updateSetting, changePassword } from '@/app/actions/settings'
+import { signOut } from '@/app/actions/auth'
 import { restoreHorse } from '@/app/actions/horses'
 import { inviteUser, deleteUser } from '@/app/actions/users'
 import type { AdminUser } from '@/app/actions/users'
@@ -126,6 +127,15 @@ function PasswordChangeForm({ email }: { email: string }) {
       >
         {isPending ? 'Updating…' : 'Update Password'}
       </Button>
+
+      <div className="pt-2 border-t">
+        <form action={signOut}>
+          <Button type="submit" variant="outline" size="sm" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive">
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </Button>
+        </form>
+      </div>
     </SectionCard>
   )
 }
@@ -284,7 +294,7 @@ function UserManagementSection({ users, currentEmail }: { users: AdminUser[]; cu
 
       <div className="space-y-2 pt-2 border-t">
         <Label htmlFor="invite-email">Invite new user</Label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Input
             id="invite-email"
             type="email"
@@ -294,10 +304,9 @@ function UserManagementSection({ users, currentEmail }: { users: AdminUser[]; cu
             onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
           />
           <Button
-            size="sm"
             onClick={handleInvite}
             disabled={isPending || !email.trim()}
-            className="shrink-0 gap-1.5"
+            className="shrink-0 gap-1.5 sm:w-auto"
           >
             <UserPlus className="h-4 w-4" />
             Invite
