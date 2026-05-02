@@ -27,7 +27,7 @@ export default async function SettingsPage() {
         email={user?.email ?? ''}
         archivedHorses={archivedHorses}
         healthIssues={healthIssues}
-        users={usersResult.ok ? usersResult.value : []}
+        users={usersResult.ok ? usersResult.data : []}
       />
     </div>
   )
