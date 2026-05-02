@@ -16,6 +16,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -98,7 +99,7 @@ export function AddHorseModal({ open, onOpenChange }: AddHorseModalProps) {
                 name="total_shares"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Shares %</FormLabel>
+                    <FormLabel>% to Sell</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -109,6 +110,7 @@ export function AddHorseModal({ open, onOpenChange }: AddHorseModalProps) {
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                     </FormControl>
+                    <FormDescription>How much of this horse you need to sell (e.g. 50 if you only own half)</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

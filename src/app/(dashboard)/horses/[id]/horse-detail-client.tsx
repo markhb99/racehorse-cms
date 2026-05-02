@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/kpi/kpi-card'
 import { SharesProgressBar } from '@/components/horses/shares-progress-bar'
 import { HorseStatusBadge } from '@/components/horses/horse-status-badge'
+import { RevenueChart } from '@/components/horses/revenue-chart'
 import { EditHorseModal } from '@/components/horses/edit-horse-modal'
 import { ArchiveHorseDialog } from '@/components/horses/archive-horse-dialog'
 import { DeleteHorseDialog } from '@/components/horses/delete-horse-dialog'
@@ -56,6 +57,8 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
 
   const { stats } = horse
   const sharesRemaining = Math.max(0, horse.total_shares - stats.sharesSoldPct)
+  const totalRevenue = horse.total_shares * Number(horse.share_price_per_pct)
+  const unsoldRevenue = Math.max(0, totalRevenue - stats.collectedTotal - stats.outstandingTotal)
 
   return (
     <>
@@ -112,13 +115,21 @@ export function HorseDetailClient({ horse, buyers }: HorseDetailClientProps) {
         </div>
 
         {/* KPI grid */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <KpiCard label="Shares Sold" value={formatPercent(stats.sharesSoldPct, 1)} />
           <KpiCard label="Shares Left" value={formatPercent(sharesRemaining, 1)} />
           <KpiCard label="Collected" value={formatCurrency(stats.collectedTotal)} />
           <KpiCard label="Outstanding" value={formatCurrency(stats.outstandingTotal)} />
-          <KpiCard label="Buyers" value={stats.buyerCount} className="col-span-2 sm:col-span-1" />
+          <KpiCard label="Total Revenue" value={formatCurrency(totalRevenue)} />
+          <KpiCard label="Buyers" value={stats.buyerCount} className="col-span-2 sm:col-span-1 lg:col-span-1" />
         </div>
+
+        {/* Revenue chart */}
+        <RevenueChart
+          collected={stats.collectedTotal}
+          outstanding={stats.outstandingTotal}
+          unsold={unsoldRevenue}
+        />
 
         {/* Progress + Pipeline */}
         <div className="space-y-3">

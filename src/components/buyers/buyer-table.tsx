@@ -140,6 +140,9 @@ export function BuyerTable({ buyers, selectedIds, onSelectionChange, onEdit, onD
                   {buyer.email && (
                     <span className="block text-xs text-muted-foreground font-normal">{buyer.email}</span>
                   )}
+                  {buyer.phone && (
+                    <span className="block text-xs text-muted-foreground font-normal">{buyer.phone}</span>
+                  )}
                 </td>
                 <td className="px-3 py-2 tabular-nums">{Number(buyer.shares_pct).toFixed(1)}%</td>
                 <td className="px-3 py-2">
