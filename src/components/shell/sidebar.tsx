@@ -1,6 +1,5 @@
 'use client'
 
-import { Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { NAV_ITEMS } from './nav-config'
 import { SidebarNavItem } from './sidebar-nav-item'
@@ -12,15 +11,19 @@ interface SidebarProps {
 }
 
 export function Sidebar({ email }: SidebarProps) {
+  const initials = email.charAt(0).toUpperCase()
+
   return (
-    <aside className="hidden md:flex md:w-60 md:flex-col bg-zinc-950 text-zinc-50 fixed inset-y-0 left-0 z-30">
+    <aside className="hidden md:flex md:w-60 md:flex-col bg-sidebar text-sidebar-foreground fixed inset-y-0 left-0 z-30">
       {/* Logo */}
       <Link
         href="/"
-        className="flex items-center gap-2 px-4 py-4 border-b border-zinc-800 hover:bg-zinc-900 transition-colors"
+        className="flex items-center gap-3 px-4 py-4 border-b border-sidebar-border hover:bg-sidebar-accent transition-colors"
       >
-        <Trophy className="h-6 w-6 text-yellow-400 shrink-0" />
-        <span className="font-semibold text-sm leading-tight">Racehorse CMS</span>
+        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
+          <span className="text-xs font-bold text-primary-foreground">RC</span>
+        </div>
+        <span className="font-semibold text-sm leading-tight text-sidebar-foreground">Racehorse CMS</span>
       </Link>
 
       {/* Nav */}
@@ -30,10 +33,13 @@ export function Sidebar({ email }: SidebarProps) {
         ))}
       </nav>
 
-      <Separator className="bg-zinc-800" />
+      <Separator className="bg-sidebar-border" />
 
       {/* User */}
-      <div className="p-2">
+      <div className="p-3 flex items-center gap-3">
+        <div className="h-7 w-7 rounded-full bg-primary/20 text-primary-foreground flex items-center justify-center shrink-0">
+          <span className="text-xs font-semibold">{initials}</span>
+        </div>
         <UserMenu email={email} variant="sidebar" />
       </div>
     </aside>
