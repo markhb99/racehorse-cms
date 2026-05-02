@@ -9,15 +9,26 @@ export const metadata = { title: 'Settings' }
 
 export default async function SettingsPage() {
   const supabase = await createServerSupabaseClient()
-  const [user, settings, archivedHorses, { horses, buyersByHorse }, usersResult] = await Promise.all([
+
+  const [user, settings, usersResult] = await Promise.all([
     getServerUser(),
     getAllSettings(supabase),
-    getHorses(supabase, { status: 'archived' }),
-    getAllActiveHorsesWithBuyers(supabase),
     listUsers(),
   ])
 
-  const healthIssues = computeDataHealth(horses, buyersByHorse)
+  // These are non-critical — if they fail, show empty state rather than crash
+  let archivedHorses: Awaited<ReturnType<typeof getHorses>> = []
+  let healthIssues: ReturnType<typeof computeDataHealth> = []
+  try {
+    const [archived, { horses, buyersByHorse }] = await Promise.all([
+      getHorses(supabase, { status: 'archived' }),
+      getAllActiveHorsesWithBuyers(supabase),
+    ])
+    archivedHorses = archived
+    healthIssues = computeDataHealth(horses, buyersByHorse)
+  } catch {
+    // Non-fatal: page renders without archived horses / health data
+  }
 
   return (
     <div className="max-w-2xl space-y-8">

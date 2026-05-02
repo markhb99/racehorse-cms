@@ -24,6 +24,6 @@ export async function getAllSettings(
   client: Client,
 ): Promise<Record<string, string>> {
   const { data, error } = await client.from('settings').select('key, value')
-  if (error) throw error
+  if (error) return {}
   return Object.fromEntries((data ?? []).map(({ key, value }) => [key, value]))
 }

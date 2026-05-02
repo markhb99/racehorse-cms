@@ -20,18 +20,22 @@ export interface AdminUser {
 }
 
 export async function listUsers(): Promise<Result<AdminUser[]>> {
-  await requireAdmin()
-  const admin = createAdminSupabaseClient()
-  const { data, error } = await admin.auth.admin.listUsers()
-  if (error) return fail(error.message)
-  return ok(
-    data.users.map((u) => ({
-      id: u.id,
-      email: u.email ?? '(no email)',
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at ?? null,
-    })),
-  )
+  try {
+    await requireAdmin()
+    const admin = createAdminSupabaseClient()
+    const { data, error } = await admin.auth.admin.listUsers()
+    if (error) return fail(error.message)
+    return ok(
+      data.users.map((u) => ({
+        id: u.id,
+        email: u.email ?? '(no email)',
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at ?? null,
+      })),
+    )
+  } catch (e) {
+    return fail(e instanceof Error ? e.message : 'Failed to load users')
+  }
 }
 
 const inviteSchema = z.object({ email: z.string().email('Invalid email address') })
