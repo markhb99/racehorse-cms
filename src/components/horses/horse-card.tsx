@@ -26,14 +26,11 @@ export function HorseCard({ horse, onEdit, onArchive, onDelete }: HorseCardProps
   const { stats } = horse
 
   return (
-    <Card className="relative overflow-hidden transition-shadow hover:shadow-md">
-      <div
-        className="absolute inset-y-0 left-0 w-1"
-        style={{ backgroundColor: horse.color }}
-        aria-hidden
-      />
-
-      <CardContent className="pl-5 pt-4 pb-4">
+    <Card
+      className="group overflow-hidden border-l-4 shadow-sm hover:shadow-md transition-shadow"
+      style={{ borderLeftColor: horse.color }}
+    >
+      <CardContent className="pl-4 pt-4 pb-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
             <Link
@@ -77,15 +74,15 @@ export function HorseCard({ horse, onEdit, onArchive, onDelete }: HorseCardProps
         <div className="mt-3 space-y-1">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Shares sold</span>
-            <span className="tabular-nums">{stats.sharesSoldPct.toFixed(1)}%</span>
+            <span className="tabular-nums font-mono">{stats.sharesSoldPct.toFixed(1)}%</span>
           </div>
           <SharesProgressBar percent={stats.sharesSoldPct} color={horse.color} />
         </div>
 
-        <div className="mt-3 flex items-end justify-between">
+        <div className="mt-3 pt-3 border-t border-border/50 flex items-end justify-between">
           <div>
             <p className="text-xs text-muted-foreground">Collected</p>
-            <p className="text-sm font-semibold tabular-nums">
+            <p className="text-sm font-semibold tabular-nums font-mono">
               {formatCurrency(stats.collectedTotal)}
             </p>
           </div>

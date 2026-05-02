@@ -13,15 +13,19 @@ export interface KpiCardProps {
 
 export function KpiCard({ label, value, hint, icon: Icon, className }: KpiCardProps) {
   return (
-    <Card className={cn('', className)}>
+    <Card className={cn('shadow-sm hover:shadow-md transition-shadow', className)}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-2">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider leading-tight">
             {label}
           </p>
-          {Icon && <Icon className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />}
+          {Icon && (
+            <div className="rounded-lg bg-primary/10 p-1.5 shrink-0">
+              <Icon className="h-4 w-4 text-primary" />
+            </div>
+          )}
         </div>
-        <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
+        <p className="mt-2 text-3xl font-bold tracking-tight font-mono">{value}</p>
         {hint && (
           <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
         )}
