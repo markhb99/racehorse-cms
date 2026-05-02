@@ -12,6 +12,14 @@ export async function signOut(): Promise<void> {
   redirect('/login')
 }
 
+// Client-friendly version — signs out without redirect so the caller can navigate
+export async function signOutAction(): Promise<Result<void>> {
+  const supabase = await createServerSupabaseClient()
+  const { error } = await supabase.auth.signOut()
+  if (error) return fail(error.message)
+  return ok(undefined)
+}
+
 export async function changePassword(input: unknown): Promise<Result<void>> {
   const parsed = changePasswordSchema.safeParse(input)
   if (!parsed.success) {

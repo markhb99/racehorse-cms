@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, User, Tag,
+  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, User, Tag, UserPlus, Trash2, Users,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { updateSetting, changePassword } from '@/app/actions/settings'
 import { restoreHorse } from '@/app/actions/horses'
+import { inviteUser, deleteUser } from '@/app/actions/users'
+import type { AdminUser } from '@/app/actions/users'
 import type { HorseWithStats } from '@/lib/types'
 import type { DataHealthIssue } from '@/lib/kpis'
 
@@ -19,6 +21,7 @@ interface SettingsSectionsProps {
   email: string
   archivedHorses: HorseWithStats[]
   healthIssues: DataHealthIssue[]
+  users: AdminUser[]
 }
 
 function SectionCard({ title, icon: Icon, children }: {
@@ -217,16 +220,107 @@ function DataHealthPanel({ issues }: { issues: DataHealthIssue[] }) {
   )
 }
 
+function UserManagementSection({ users, currentEmail }: { users: AdminUser[]; currentEmail: string }) {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [isPending, startTransition] = useTransition()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  function handleInvite() {
+    startTransition(async () => {
+      const result = await inviteUser({ email: email.trim() })
+      if (result.ok) {
+        toast.success(`Invite sent to ${email.trim()}`)
+        setEmail('')
+        router.refresh()
+      } else {
+        toast.error(result.error)
+      }
+    })
+  }
+
+  function handleDelete(id: string, userEmail: string) {
+    if (!confirm(`Remove ${userEmail}? They will lose access immediately.`)) return
+    setDeletingId(id)
+    startTransition(async () => {
+      const result = await deleteUser({ id })
+      if (result.ok) {
+        toast.success('User removed')
+        router.refresh()
+      } else {
+        toast.error(result.error)
+      }
+      setDeletingId(null)
+    })
+  }
+
+  return (
+    <SectionCard title="User Management" icon={Users}>
+      <ul className="divide-y text-sm">
+        {users.map((u) => (
+          <li key={u.id} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
+            <div className="min-w-0">
+              <p className="font-medium truncate">{u.email}</p>
+              <p className="text-xs text-muted-foreground">
+                {u.last_sign_in_at
+                  ? `Last login: ${new Date(u.last_sign_in_at).toLocaleDateString()}`
+                  : 'Never logged in'}
+              </p>
+            </div>
+            {u.email !== currentEmail && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                disabled={isPending && deletingId === u.id}
+                onClick={() => handleDelete(u.id, u.email)}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <div className="space-y-2 pt-2 border-t">
+        <Label htmlFor="invite-email">Invite new user</Label>
+        <div className="flex gap-2">
+          <Input
+            id="invite-email"
+            type="email"
+            placeholder="email@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleInvite()}
+          />
+          <Button
+            size="sm"
+            onClick={handleInvite}
+            disabled={isPending || !email.trim()}
+            className="shrink-0 gap-1.5"
+          >
+            <UserPlus className="h-4 w-4" />
+            Invite
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">They'll receive an email with a link to set their password.</p>
+      </div>
+    </SectionCard>
+  )
+}
+
 export function SettingsSections({
   projectName,
   email,
   archivedHorses,
   healthIssues,
+  users,
 }: SettingsSectionsProps) {
   return (
     <>
       <ProjectNameForm currentName={projectName} />
       <PasswordChangeForm email={email} />
+      <UserManagementSection users={users} currentEmail={email} />
       <ArchivedHorsesList horses={archivedHorses} />
       <DataHealthPanel issues={healthIssues} />
     </>

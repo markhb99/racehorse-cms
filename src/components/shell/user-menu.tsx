@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { LogOut, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
@@ -7,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { signOut } from '@/app/actions/auth'
+import { signOutAction } from '@/app/actions/auth'
 
 interface UserMenuProps {
   email: string
@@ -15,6 +16,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
+  const router = useRouter()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -36,7 +38,8 @@ export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem
           onSelect={async () => {
-            await signOut()
+            await signOutAction()
+            router.push('/login')
           }}
           className="text-destructive focus:text-destructive gap-2"
         >
