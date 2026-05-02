@@ -4,10 +4,9 @@ import { LogOut, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { signOutAction } from '@/app/actions/auth'
+import { signOut } from '@/app/actions/auth'
 
 interface UserMenuProps {
   email: string
@@ -25,25 +24,21 @@ export function UserMenu({ email, variant = 'topbar' }: UserMenuProps) {
         }
         aria-label="User menu"
       >
-        <span
-          className="max-w-[150px] truncate"
-          title={email}
-        >
+        <span className="max-w-[150px] truncate" title={email}>
           {email}
         </span>
         <ChevronDown className="h-3 w-3 shrink-0" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuItem
-          onSelect={async () => {
-            await signOutAction()
-            window.location.href = '/login'
-          }}
-          className="text-destructive focus:text-destructive gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign out
-        </DropdownMenuItem>
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive hover:bg-accent cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </button>
+        </form>
       </DropdownMenuContent>
     </DropdownMenu>
   )
