@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Legend, ResponsiveContainer,
 } from 'recharts'
 import { ChartEmptyState } from './chart-empty-state'
@@ -59,11 +59,6 @@ export function SharesByStatusBar({ data, height = 280 }: SharesByStatusBarProps
           tickLine={false}
           axisLine={false}
           unit="%"
-        />
-        <Tooltip
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter={(value: any, name: any) => [`${Number(value).toFixed(1)}%`, STATUS_LABELS[name as string] ?? name]}
-          contentStyle={{ fontSize: 12, borderRadius: 8 }}
         />
         <Legend
           formatter={(value) => STATUS_LABELS[value] ?? value}

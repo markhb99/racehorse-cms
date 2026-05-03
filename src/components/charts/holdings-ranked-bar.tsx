@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
 } from 'recharts'
 import { ChartEmptyState } from './chart-empty-state'
 import type { AnalyticsData } from '@/lib/kpis'
@@ -46,14 +46,6 @@ export function HoldingsRankedBar({ data, height = 320 }: HoldingsRankedBarProps
           tickLine={false}
           axisLine={false}
           width={96}
-        />
-        <Tooltip
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter={(value: any, _name: any, props: any) => [
-            `${Number(value).toFixed(1)}%`,
-            props?.payload?.horseName ?? '',
-          ]}
-          contentStyle={{ fontSize: 12, borderRadius: 8 }}
         />
         <Bar dataKey="sharesPct" fill="#3b82f6" radius={[0, 3, 3, 0]} />
       </BarChart>

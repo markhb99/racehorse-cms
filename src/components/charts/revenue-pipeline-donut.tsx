@@ -1,6 +1,6 @@
 'use client'
 
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts'
 import { ChartEmptyState } from './chart-empty-state'
 import { formatCurrency } from '@/lib/format/currency'
 
@@ -43,11 +43,6 @@ export function RevenuePipelineDonut({
             <Cell key={i} fill={SEGMENTS[i].color} />
           ))}
         </Pie>
-        <Tooltip
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter={(value: any) => [formatCurrency(Number(value)), '']}
-          contentStyle={{ fontSize: 12, borderRadius: 8 }}
-        />
         <Legend wrapperStyle={{ fontSize: 11 }} />
       </PieChart>
     </ResponsiveContainer>

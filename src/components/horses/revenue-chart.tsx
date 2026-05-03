@@ -1,33 +1,12 @@
 'use client'
 
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from 'recharts'
 import { formatCurrency } from '@/lib/format/currency'
 
 interface RevenueChartProps {
   collected: number
   outstanding: number
   unsold: number
-}
-
-interface TooltipPayload {
-  name: string
-  value: number
-  fill: string
-}
-
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: TooltipPayload[] }) {
-  if (!active || !payload?.length) return null
-  return (
-    <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md space-y-1">
-      {payload.map((p) => (
-        <div key={p.name} className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full shrink-0" style={{ background: p.fill }} />
-          <span className="text-muted-foreground">{p.name}</span>
-          <span className="font-semibold tabular-nums ml-auto pl-4">{formatCurrency(p.value)}</span>
-        </div>
-      ))}
-    </div>
-  )
 }
 
 export function RevenueChart({ collected, outstanding, unsold }: RevenueChartProps) {
@@ -46,7 +25,6 @@ export function RevenueChart({ collected, outstanding, unsold }: RevenueChartPro
       <ResponsiveContainer width="100%" height={56}>
         <BarChart data={data} layout="vertical" barSize={32} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
           <XAxis type="number" domain={[0, total]} hide />
-          <Tooltip content={<CustomTooltip />} cursor={false} />
           <Bar dataKey="collected" name="Collected" stackId="a" fill="#22c55e" radius={[4, 0, 0, 4]}>
             <Cell fill="#22c55e" />
           </Bar>
