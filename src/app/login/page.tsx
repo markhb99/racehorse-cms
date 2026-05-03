@@ -18,7 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="flex flex-col items-center mb-8 gap-3">
           <div className="text-5xl" aria-hidden>🏇</div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">Racehorse Share CMS</h1>
+            <h1 className="text-xl font-semibold tracking-tight">Racehorse Share CMS</h1>
             <p className="text-sm text-muted-foreground mt-1">Sign in to continue</p>
           </div>
         </div>

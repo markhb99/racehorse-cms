@@ -46,7 +46,7 @@ export function HorsesPageClient({ horses, status }: HorsesPageClientProps) {
     <>
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold tracking-tight">Horses</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Horses</h1>
           <Button onClick={() => setAddOpen(true)} size="sm" className="gap-1.5">
             <Plus className="h-4 w-4" />
             Add Horse
