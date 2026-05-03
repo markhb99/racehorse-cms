@@ -25,7 +25,7 @@ export function KpiCard({ label, value, hint, icon: Icon, className }: KpiCardPr
             </div>
           )}
         </div>
-        <p className="mt-2 text-3xl font-bold tracking-tight font-mono">{value}</p>
+        <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{value}</p>
         {hint && (
           <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
         )}

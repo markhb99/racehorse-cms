@@ -32,7 +32,7 @@ export default async function DashboardPage() {
     <AppShell email={user?.email ?? ''}>
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <Link href="/horses" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5')}>
             <Plus className="h-4 w-4" /> Add Horse
           </Link>

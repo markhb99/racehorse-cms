@@ -34,7 +34,7 @@ export default async function AnalyticsPage({ searchParams }: AnalyticsPageProps
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
         <div className="flex gap-1 rounded-lg border bg-muted p-1">
           {RANGES.map((r) => (
             <Link

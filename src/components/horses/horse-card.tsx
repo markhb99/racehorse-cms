@@ -74,7 +74,7 @@ export function HorseCard({ horse, onEdit, onArchive, onDelete }: HorseCardProps
         <div className="mt-3 space-y-1">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Shares sold</span>
-            <span className="tabular-nums font-mono">{stats.sharesSoldPct.toFixed(1)}%</span>
+            <span className="tabular-nums">{stats.sharesSoldPct.toFixed(1)}%</span>
           </div>
           <SharesProgressBar percent={stats.sharesSoldPct} color={horse.color} />
         </div>
@@ -82,7 +82,7 @@ export function HorseCard({ horse, onEdit, onArchive, onDelete }: HorseCardProps
         <div className="mt-3 pt-3 border-t border-border/50 flex items-end justify-between">
           <div>
             <p className="text-xs text-muted-foreground">Collected</p>
-            <p className="text-sm font-semibold tabular-nums font-mono">
+            <p className="text-sm font-semibold tabular-nums">
               {formatCurrency(stats.collectedTotal)}
             </p>
           </div>
