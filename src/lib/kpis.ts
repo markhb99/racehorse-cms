@@ -1,4 +1,6 @@
-import type { Buyer, Horse, HorseStats, GlobalKpis } from './types'
+import type { Buyer, Horse, HorseStats, GlobalKpis, CustomerCommunication, CustomerWithSummary, CustomerHoldingsSummary, RankedCustomer } from './types'
+// Re-export so callers can import from kpis without touching types.ts
+export type { CustomerHoldingsSummary, RankedCustomer }
 import { BUYER_STATUS_KEYS, TERMINAL_STATUSES, type BuyerStatusKey } from './constants'
 
 export type AnalyticsRange = 'all' | '30d' | '90d'
@@ -259,4 +261,60 @@ export function computeAnalytics(
       newestBuyer: `${newest.first_name} ${newest.last_name ?? ''}`.trim(),
     },
   }
+}
+
+// ─── Customer KPI functions (pure, no DB calls) ────────────────────────────
+
+export function computeCustomerHoldingsSummary(buyers: Buyer[]): CustomerHoldingsSummary {
+  const active = buyers.filter((b) => b.status !== 'not_proceeding')
+  const totalSharesPct = active.reduce((s, b) => s + Number(b.shares_pct), 0)
+  const lifetimeInvoiced = active.reduce((s, b) => s + Number(b.invoice_amount), 0)
+  const lifetimePaid = active.reduce((s, b) => s + Number(b.paid_amount), 0)
+  const horseIds = new Set(buyers.map((b) => b.horse_id))
+  return {
+    totalSharesPct: Math.round(totalSharesPct * 100) / 100,
+    horseCount: horseIds.size,
+    lifetimeInvoiced: Math.round(lifetimeInvoiced * 100) / 100,
+    lifetimePaid: Math.round(lifetimePaid * 100) / 100,
+    lifetimeOutstanding: Math.round((lifetimeInvoiced - lifetimePaid) * 100) / 100,
+  }
+}
+
+export function rankCustomersByHoldings(customers: CustomerWithSummary[]): RankedCustomer[] {
+  return [...customers]
+    .sort((a, b) => b.totalSharesPct - a.totalSharesPct || b.lifetimePaid - a.lifetimePaid)
+    .map((c, i) => ({ ...c, rank: i + 1 }))
+}
+
+export function dueFollowUps(
+  comms: CustomerCommunication[],
+  now: Date,
+): {
+  overdue: CustomerCommunication[]
+  dueThisWeek: CustomerCommunication[]
+  dueLater: CustomerCommunication[]
+} {
+  const pending = comms.filter((c) => c.follow_up_at && !c.follow_up_completed_at)
+  const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+  const overdue: CustomerCommunication[] = []
+  const dueThisWeek: CustomerCommunication[] = []
+  const dueLater: CustomerCommunication[] = []
+  for (const c of pending) {
+    const d = new Date(c.follow_up_at!)
+    if (d < now) overdue.push(c)
+    else if (d <= weekFromNow) dueThisWeek.push(c)
+    else dueLater.push(c)
+  }
+  return { overdue, dueThisWeek, dueLater }
+}
+
+export function lastContactedMap(comms: CustomerCommunication[]): Map<string, string> {
+  const m = new Map<string, string>()
+  for (const c of comms) {
+    const existing = m.get(c.customer_id)
+    if (!existing || c.occurred_at > existing) {
+      m.set(c.customer_id, c.occurred_at)
+    }
+  }
+  return m
 }

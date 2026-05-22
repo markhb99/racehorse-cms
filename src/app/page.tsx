@@ -6,9 +6,10 @@ import { KpiCard } from '@/components/kpi/kpi-card'
 import { HorseQuickCard } from '@/components/horses/horse-quick-card'
 import { SharesByStatusBar } from '@/components/charts/shares-by-status-bar'
 import { RevenuePipelineDonut } from '@/components/charts/revenue-pipeline-donut'
+import { FollowUpsDueCard } from '@/components/customers/follow-ups-due-card'
 import { getAllActiveHorsesWithBuyers } from '@/lib/supabase/queries/horses'
-import { computeGlobalKpis, computeAnalytics, computeHorseStats } from '@/lib/kpis'
-import type { HorseWithStats } from '@/lib/types'
+import { computeGlobalKpis, computeAnalytics, computeHorseStats, dueFollowUps } from '@/lib/kpis'
+import type { HorseWithStats, CustomerCommunication } from '@/lib/types'
 import { formatCurrency } from '@/lib/format/currency'
 import { formatPercent } from '@/lib/format/percent'
 import { buttonVariants } from '@/components/ui/button'
@@ -19,6 +20,30 @@ export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient()
 
   const { horses, buyersByHorse } = await getAllActiveHorsesWithBuyers(supabase)
+
+  // Follow-ups due — non-critical, don't crash dashboard
+  let followUpComms: CustomerCommunication[] = []
+  let customerNames = new Map<string, string>()
+  try {
+    const [{ data: comms }, { data: customers }] = await Promise.all([
+      supabase
+        .from('customer_communications')
+        .select('*')
+        .not('follow_up_at', 'is', null)
+        .is('follow_up_completed_at', null)
+        .order('follow_up_at', { ascending: true }),
+      supabase
+        .from('customers')
+        .select('id, display_name')
+        .is('deleted_at', null),
+    ])
+    followUpComms = (comms ?? []) as CustomerCommunication[]
+    customerNames = new Map((customers ?? []).map((c) => [c.id, c.display_name]))
+  } catch {
+    // Non-fatal
+  }
+
+  const { overdue, dueThisWeek } = dueFollowUps(followUpComms, new Date())
 
   const kpis = computeGlobalKpis(horses, buyersByHorse)
   const analytics = computeAnalytics(horses, buyersByHorse, 'all')
@@ -31,6 +56,14 @@ export default async function DashboardPage() {
   return (
     <AppShell email={user?.email ?? ''}>
       <div className="space-y-6">
+        {(overdue.length > 0 || dueThisWeek.length > 0) && (
+          <FollowUpsDueCard
+            overdue={overdue}
+            dueThisWeek={dueThisWeek}
+            customerNames={customerNames}
+          />
+        )}
+
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
           <Link href="/horses" className={cn(buttonVariants({ size: 'sm' }), 'gap-1.5')}>

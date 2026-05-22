@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { NAV_ITEMS } from './nav-config'
+import { TAB_BAR_ITEMS } from './nav-config'
 
 export function BottomTabBar() {
   const pathname = usePathname()
@@ -14,7 +14,7 @@ export function BottomTabBar() {
       aria-label="Bottom navigation"
     >
       <div className="h-16 flex items-stretch">
-        {NAV_ITEMS.map((item) => {
+        {TAB_BAR_ITEMS.map((item) => {
           const isActive =
             item.href === '/'
               ? pathname === '/'
