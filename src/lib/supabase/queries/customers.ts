@@ -141,10 +141,13 @@ export async function getCustomerById(
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const holdings: BuyerWithHorse[] = ((buyerRows ?? []) as any[]).map((b) => ({
-    ...b,
-    horse: Array.isArray(b.horse) ? b.horse[0] : b.horse,
-  }))
+  const holdings: BuyerWithHorse[] = ((buyerRows ?? []) as any[]).map((b) => {
+    const horse = Array.isArray(b.horse) ? b.horse[0] : b.horse
+    return {
+      ...b,
+      horse: horse ?? { id: b.horse_id, display_name: 'Unknown', color: '#888888', status: 'unknown' },
+    }
+  })
 
   return {
     ...customer,

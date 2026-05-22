@@ -27,15 +27,18 @@ export function HoldingsTable({ holdings }: { holdings: BuyerWithHorse[] }) {
           {holdings.map((h) => {
             const outstanding = Number(h.invoice_amount) - Number(h.paid_amount)
             const status = h.status as BuyerStatusKey
+            const horse = h.horse as typeof h.horse | null
             return (
               <tr key={h.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-3 py-2.5 font-medium whitespace-nowrap">
                   <Link href={`/horses/${h.horse_id}`} className="hover:underline flex items-center gap-2">
-                    <span
-                      className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
-                      style={{ background: h.horse.color }}
-                    />
-                    {h.horse.display_name}
+                    {horse?.color && (
+                      <span
+                        className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
+                        style={{ background: horse.color }}
+                      />
+                    )}
+                    {horse?.display_name ?? 'Unknown horse'}
                   </Link>
                 </td>
                 <td className="px-3 py-2.5 tabular-nums">{Number(h.shares_pct).toFixed(1)}%</td>
