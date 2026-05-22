@@ -7,6 +7,7 @@ import {
   updateBuyerSchema,
   bulkUpdateStatusSchema,
 } from '@/lib/schemas/buyer'
+import { findOrCreateCustomer } from '@/lib/supabase/queries/customers'
 import { ok, fail } from '@/lib/result'
 import type { Result } from '@/lib/result'
 
@@ -26,9 +27,24 @@ export async function createBuyer(input: unknown): Promise<Result<{ id: string }
   }
 
   const supabase = await createServerSupabaseClient()
+
+  // Find or create a customer record for this buyer
+  let customerId: string
+  try {
+    const result = await findOrCreateCustomer(supabase, {
+      firstName: parsed.data.first_name,
+      lastName: parsed.data.last_name ?? undefined,
+      email: parsed.data.email ?? undefined,
+      phone: parsed.data.phone ?? undefined,
+    })
+    customerId = result.id
+  } catch (e) {
+    return fail('Could not resolve customer record: ' + (e as Error).message, undefined, 'db_error')
+  }
+
   const { data, error } = await supabase
     .from('buyers')
-    .insert(parsed.data)
+    .insert({ ...parsed.data, customer_id: customerId })
     .select('id')
     .single()
 
