@@ -23,7 +23,7 @@ export async function getCustomers(
     .order('display_name', { ascending: true })
 
   if (opts.status && opts.status !== 'all') {
-    query = query.eq('status', opts.status)
+    query = query.eq('status', opts.status as 'prospect' | 'active' | 'lapsed' | 'archived')
   }
 
   if (opts.search) {

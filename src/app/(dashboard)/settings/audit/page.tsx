@@ -27,8 +27,11 @@ export default async function AuditLogPage({ searchParams }: PageProps) {
     .order('occurred_at', { ascending: false })
     .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
-  if (entity) query = query.eq('entity', entity)
-  if (action) query = query.eq('action', action)
+  type AuditEntity = 'horse' | 'buyer' | 'customer' | 'customer_communication' | 'setting' | 'user' | 'export' | 'login' | 'logout' | 'import'
+  type AuditAction = 'create' | 'update' | 'delete' | 'soft_delete' | 'restore' | 'forget' | 'export' | 'view' | 'login' | 'logout' | 'consent_granted' | 'consent_revoked' | 'import'
+
+  if (entity) query = query.eq('entity', entity as AuditEntity)
+  if (action) query = query.eq('action', action as AuditAction)
 
   const { data: rows } = await query
 
