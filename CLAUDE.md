@@ -42,3 +42,6 @@ Next.js 16 + Supabase + Tailwind + shadcn/ui dashboard for a bloodstock agent ma
 - KPI cards: Shares Sold, Shares Left, Collected, Outstanding, Total Revenue, Buyers
 - Settings: project name, password change, user management (invite/remove), archived horses, data health
 - User management: `src/app/actions/users.ts` + `src/lib/supabase/admin.ts` (service role key)
+
+## Decision log
+- **Phase 7 (customer CRM) attempted in-tree and rolled back on 2026-05-22** due to schema-coupling regressions — the `buyers → customers` FK refactor (NOT NULL `customer_id`) broke the buyer create/import paths and the customer profile page. Rolled back via `git revert` (commit `05cd262`) and DB migration `008_rollback_phase_7.sql`, which drops `buyers.customer_id`, `customers`, `customer_communications`, and `audit_log`. Phase 7 work stays in git history (`37d9799`) for reference. Before the drop, the 444 customer records, the buyers↔customer link, and 16 audit_log rows were exported to `exports/pre-rollback/` as seed data for a future standalone CRM project. Migrations at HEAD are 001, 002, 008.
