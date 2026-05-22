@@ -45,3 +45,48 @@ export async function exportHorseBuyers(horse: Horse, buyers: Buyer[]): Promise<
 
   return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer
 }
+
+export function exportFullBackup(data: {
+  horses: Horse[]
+  buyers: Buyer[]
+  settings: Array<{ key: string; value: string; updated_at: string }>
+}): Buffer {
+  const wb = XLSX.utils.book_new()
+
+  const horseRows = data.horses.map((h) => ({
+    Name: h.display_name,
+    Status: h.status,
+    'Shares to Sell %': Number(h.total_shares),
+    'Price per %': Number(h.share_price_per_pct),
+    Colour: h.color,
+    Notes: h.notes ?? '',
+    Created: h.created_at,
+    ID: h.id,
+  }))
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(horseRows), 'Horses')
+
+  const buyerRows = data.buyers.map((b) => ({
+    'First Name': b.first_name,
+    'Last Name': b.last_name ?? '',
+    Email: b.email ?? '',
+    Phone: b.phone ?? '',
+    'Shares %': Number(b.shares_pct),
+    Status: b.status,
+    'Invoice (AUD)': Number(b.invoice_amount),
+    'Paid (AUD)': Number(b.paid_amount),
+    Remarks: b.remarks ?? '',
+    'Horse ID': b.horse_id,
+    Created: b.created_at,
+    ID: b.id,
+  }))
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(buyerRows), 'Buyers')
+
+  const settingRows = data.settings.map((s) => ({
+    Key: s.key,
+    Value: s.value,
+    Updated: s.updated_at,
+  }))
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(settingRows), 'Settings')
+
+  return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' }) as Buffer
+}

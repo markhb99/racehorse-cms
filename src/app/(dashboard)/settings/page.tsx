@@ -39,6 +39,7 @@ export default async function SettingsPage() {
         archivedHorses={archivedHorses}
         healthIssues={healthIssues}
         users={usersResult.ok ? usersResult.data : []}
+        commitSha={process.env.VERCEL_GIT_COMMIT_SHA}
       />
     </div>
   )

@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, Tag, UserPlus, Trash2, Users, LogOut,
+  HardDriveDownload, FileSpreadsheet, FileJson, ExternalLink,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -23,7 +24,11 @@ interface SettingsSectionsProps {
   archivedHorses: HorseWithStats[]
   healthIssues: DataHealthIssue[]
   users: AdminUser[]
+  commitSha?: string
 }
+
+const GITHUB_REPO = 'https://github.com/markhb99/racehorse-cms'
+const GITHUB_ZIP = `${GITHUB_REPO}/archive/refs/heads/main.zip`
 
 function SectionCard({ title, icon: Icon, children }: {
   title: string
@@ -318,12 +323,65 @@ function UserManagementSection({ users, currentEmail }: { users: AdminUser[]; cu
   )
 }
 
+function BackupSection({ commitSha }: { commitSha?: string }) {
+  const go = (url: string) => () => { window.location.href = url }
+
+  return (
+    <SectionCard title="Backup & Export" icon={HardDriveDownload}>
+      <div className="space-y-2">
+        <Label>Database backup</Label>
+        <p className="text-xs text-muted-foreground">
+          Download a copy of all horses, buyers and settings.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={go('/api/backup/database?format=xlsx')}>
+            <FileSpreadsheet className="h-4 w-4" />
+            Download Excel
+          </Button>
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={go('/api/backup/database?format=json')}>
+            <FileJson className="h-4 w-4" />
+            Download JSON
+          </Button>
+        </div>
+      </div>
+
+      <div className="space-y-2 pt-3 border-t">
+        <Label>Code backup</Label>
+        <p className="text-xs text-muted-foreground">
+          Every push to GitHub is an automatic code backup. You can also download the full source.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={go(GITHUB_ZIP)}>
+            <HardDriveDownload className="h-4 w-4" />
+            Download source (.zip)
+          </Button>
+          <a
+            href={GITHUB_REPO}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-medium h-8 hover:bg-muted transition-colors"
+          >
+            <ExternalLink className="h-4 w-4" />
+            View on GitHub
+          </a>
+        </div>
+        {commitSha && (
+          <p className="text-xs text-muted-foreground">
+            Deployed commit: <span className="font-mono">{commitSha.slice(0, 7)}</span>
+          </p>
+        )}
+      </div>
+    </SectionCard>
+  )
+}
+
 export function SettingsSections({
   projectName,
   email,
   archivedHorses,
   healthIssues,
   users,
+  commitSha,
 }: SettingsSectionsProps) {
   return (
     <>
@@ -331,6 +389,7 @@ export function SettingsSections({
       <PasswordChangeForm email={email} />
       <UserManagementSection users={users} currentEmail={email} />
       <ArchivedHorsesList horses={archivedHorses} />
+      <BackupSection commitSha={commitSha} />
       <DataHealthPanel issues={healthIssues} />
     </>
   )
