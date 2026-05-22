@@ -3,6 +3,7 @@
 import { useState, useRef, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import type { Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Upload, CheckCircle2, AlertCircle, Loader2, ChevronRight, ChevronLeft } from 'lucide-react'
@@ -81,8 +82,8 @@ export function SyndicationWizard() {
   const [isPending, startTransition] = useTransition()
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const horseForm = useForm<HorseFormValues>({
-    resolver: zodResolver(horseSchema),
+  const horseForm = useForm<HorseFormValues, unknown, HorseFormValues>({
+    resolver: zodResolver(horseSchema) as Resolver<HorseFormValues, unknown, HorseFormValues>,
     defaultValues: {
       display_name: '', total_shares: 100, share_price_per_pct: 0, color: '#2563EB', notes: '',
     },
@@ -91,7 +92,7 @@ export function SyndicationWizard() {
   // ── Step 1: Horse details ────────────────────────────────────────────────────
 
   const handleHorseSubmit = horseForm.handleSubmit((data) => {
-    setHorseData(data)
+    setHorseData(data as HorseFormValues)
     setStep(1)
   })
 

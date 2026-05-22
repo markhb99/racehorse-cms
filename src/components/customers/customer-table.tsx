@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { MoreHorizontal, Pencil, Archive, Trash2 } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -20,6 +21,7 @@ interface CustomerTableProps {
 }
 
 export function CustomerTable({ customers, onEdit, onArchive, onDelete }: CustomerTableProps) {
+  const router = useRouter()
   if (customers.length === 0) {
     return (
       <div className="rounded-xl border">
@@ -80,8 +82,8 @@ export function CustomerTable({ customers, onEdit, onArchive, onDelete }: Custom
                       <MoreHorizontal className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/customers/${c.id}`}>View profile</Link>
+                      <DropdownMenuItem onSelect={() => router.push(`/customers/${c.id}`)}>
+                        View profile
                       </DropdownMenuItem>
                       <DropdownMenuItem onSelect={() => onEdit(c)} className="gap-2">
                         <Pencil className="h-3.5 w-3.5" />Edit

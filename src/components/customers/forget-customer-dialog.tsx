@@ -59,8 +59,7 @@ export function ForgetCustomerDialog({
 
         {step === 1 && (
           <>
-            <DialogDescription asChild>
-              <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-sm text-muted-foreground">
                 <p>This will permanently erase all personal data for <strong>{customer.display_name}</strong>:</p>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                   <li>Email, phone, and address</li>
@@ -76,8 +75,7 @@ export function ForgetCustomerDialog({
                     Archive all holdings before erasing this customer.
                   </div>
                 )}
-              </div>
-            </DialogDescription>
+            </div>
 
             <DialogFooter>
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

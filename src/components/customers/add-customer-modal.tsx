@@ -2,6 +2,7 @@
 
 import { useEffect, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
+import type { Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
@@ -43,8 +44,8 @@ export function AddCustomerModal({
 }) {
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const form = useForm<FormValues, unknown, FormValues>({
+    resolver: zodResolver(schema) as Resolver<FormValues, unknown, FormValues>,
     defaultValues: {
       legal_first_name: '',
       legal_last_name: '',

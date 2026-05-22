@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { MoreHorizontal, Pencil, Archive, Trash2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -21,6 +22,7 @@ interface CustomerCardListProps {
 }
 
 export function CustomerCardList({ customers, onEdit, onArchive, onDelete }: CustomerCardListProps) {
+  const router = useRouter()
   if (customers.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-muted-foreground">No customers found.</p>
@@ -55,8 +57,8 @@ export function CustomerCardList({ customers, onEdit, onArchive, onDelete }: Cus
                   <MoreHorizontal className="h-5 w-5" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
-                  <DropdownMenuItem asChild>
-                    <Link href={`/customers/${c.id}`}>View profile</Link>
+                  <DropdownMenuItem onSelect={() => router.push(`/customers/${c.id}`)}>
+                    View profile
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => onEdit(c)} className="gap-2">
                     <Pencil className="h-3.5 w-3.5" />Edit

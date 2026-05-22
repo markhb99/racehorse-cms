@@ -90,7 +90,7 @@ export function MarketingConsentToggle({ customer }: { customer: Customer }) {
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
               <Label>Consent source</Label>
-              <Select value={source} onValueChange={setSource}>
+              <Select value={source} onValueChange={(v) => { if (v) setSource(v) }}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {CONSENT_SOURCES.map((s) => (
