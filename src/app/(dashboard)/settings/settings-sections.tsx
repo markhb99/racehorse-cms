@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, Tag, UserPlus, Trash2, Users, LogOut, ClipboardList,
+  CheckCircle2, AlertTriangle, Info, RotateCcw, ShieldCheck, Tag, UserPlus, Trash2, Users, LogOut,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -332,22 +332,6 @@ export function SettingsSections({
       <UserManagementSection users={users} currentEmail={email} />
       <ArchivedHorsesList horses={archivedHorses} />
       <DataHealthPanel issues={healthIssues} />
-      <div className="rounded-xl border bg-card p-5 space-y-3">
-        <div className="flex items-center gap-2">
-          <ClipboardList className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold">Audit Log</h2>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          View a complete record of all data access, changes, and exports for compliance purposes.
-        </p>
-        <a
-          href="/settings/audit"
-          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
-        >
-          <ClipboardList className="h-3.5 w-3.5" />
-          View Audit Log
-        </a>
-      </div>
     </>
   )
 }

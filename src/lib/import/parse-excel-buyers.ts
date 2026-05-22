@@ -36,21 +36,6 @@ interface ColMap {
   remarks: number
 }
 
-const TFN_PATTERNS = [/tax.?file.?number/i, /^tfn$/i]
-
-function rejectTfnColumns(rawRows: unknown[][], headerRowIdx: number): string[] {
-  const row = rawRows[headerRowIdx]
-  if (!row) return []
-  const rejected: string[] = []
-  for (const cell of row) {
-    const s = toStr(cell)
-    if (TFN_PATTERNS.some((p) => p.test(s.trim()))) {
-      rejected.push(s)
-    }
-  }
-  return rejected
-}
-
 const HEADER_HINTS: Record<keyof Omit<ColMap, 'headerRowIdx'>, string[]> = {
   firstName:  ['firstname', 'first'],
   lastName:   ['lastname', 'last', 'surname'],
@@ -151,15 +136,6 @@ export async function parseExcelBuyers(arrayBuffer: ArrayBuffer): Promise<ParseR
     return {
       rows: [],
       warnings: ['Could not find a header row. Make sure the spreadsheet has columns for "First Name" and "Shares %".'],
-    }
-  }
-
-  // Reject any TFN columns — compliance requirement
-  const tfnCols = rejectTfnColumns(rawRows, cols.headerRowIdx)
-  if (tfnCols.length > 0) {
-    return {
-      rows: [],
-      warnings: [`Import rejected: spreadsheet contains a Tax File Number column ("${tfnCols.join('", "')}"). Remove TFN data before importing.`],
     }
   }
 

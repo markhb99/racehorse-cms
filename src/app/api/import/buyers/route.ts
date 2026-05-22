@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerSupabaseClient, getServerUser } from '@/lib/supabase/server'
 import { importPayloadSchema } from '@/lib/schemas/import'
 import { normalizeFullName } from '@/lib/import/upsert-strategy'
-import { findOrCreateCustomer } from '@/lib/supabase/queries/customers'
 
 export async function POST(request: NextRequest) {
   const user = await getServerUser()
@@ -75,17 +74,9 @@ export async function POST(request: NextRequest) {
 
       if (!error) updated++
     } else {
-      // Find or create the customer record before inserting buyer
-      const { id: customerId } = await findOrCreateCustomer(supabase, {
-        firstName: row.first_name,
-        lastName: row.last_name ?? undefined,
-        email: row.email ?? undefined,
-        phone: row.phone ?? undefined,
-      })
-
+      // Insert new buyer
       const { error } = await supabase.from('buyers').insert({
         horse_id:       horseId,
-        customer_id:    customerId,
         first_name:     row.first_name,
         last_name:      row.last_name ?? null,
         email:          row.email ?? null,
